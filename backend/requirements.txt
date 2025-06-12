@@ -6,7 +6,6 @@ python-multipart
 python-dotenv
 pdfplumber
 uuid
-psycopg2-binary
 pydantic
 google-generativeai
 sse_starlette
