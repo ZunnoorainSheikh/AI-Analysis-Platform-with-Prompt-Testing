@@ -68,11 +68,13 @@ const UploadPage = () => {
           <div className="w-full mx-auto bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
             <div className="px-4 py-5 sm:p-6">
               <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                <div>                  <label className="block text-sm font-medium text-gray-700">
                     File
                   </label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                  <label 
+                    htmlFor="file-upload" 
+                    className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-gray-400"
+                  >
                     <div className="space-y-1 text-center">
                       <svg
                         className="mx-auto h-12 w-12 text-gray-400"
@@ -89,26 +91,23 @@ const UploadPage = () => {
                         />
                       </svg>
                       <div className="flex text-sm text-gray-600">
-                        <label
-                          htmlFor="file-upload"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
-                        >
-                          <span>Upload a file</span>
-                          <input
-                            id="file-upload"
-                            name="file-upload"
-                            type="file"
-                            className="sr-only"
-                            accept=".pdf,.txt"
-                            onChange={handleFileChange}
-                            disabled={loading}
-                          />
-                        </label>
+                        <span className="relative bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
+                          Upload a file
+                        </span>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          className="sr-only"
+                          accept=".pdf,.txt"
+                          onChange={handleFileChange}
+                          disabled={loading}
+                        />
                         <p className="pl-1">or drag and drop</p>
                       </div>
                       <p className="text-xs text-gray-500">PDF or TXT up to 5MB</p>
                     </div>
-                  </div>
+                  </label>
                 </div>
 
                 {file && (
