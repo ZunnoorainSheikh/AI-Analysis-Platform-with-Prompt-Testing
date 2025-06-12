@@ -96,7 +96,7 @@ async def analyze_document(
     # Call Google Gemini API (async)
     try:
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        model = genai.GenerativeModel("gemini-pro")
+        model = genai.GenerativeModel("gemini-1.0-pro")  # Updated model name
         full_prompt = f"{prompt}\n\n{doc.extracted_text}"
         response = await model.generate_content_async(full_prompt)
         ai_text = response.text if hasattr(response, 'text') else str(response)
