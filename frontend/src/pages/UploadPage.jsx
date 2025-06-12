@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box, Button, Input, Alert, CircularProgress, Paper, Stack, Card } from '@mui/material';
-import axios from 'axios';
+import axios from '../axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
