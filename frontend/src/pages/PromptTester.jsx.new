@@ -19,23 +19,6 @@ const PromptTester = () => {
   const [progressStage, setProgressStage] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
 
-  // Check API health
-  useEffect(() => {
-    const checkApiHealth = async () => {
-      try {
-        console.log('Checking API health...');
-        const response = await axios.get('/', { timeout: 5000 });
-        console.log('API health check response:', response.data);
-        toast.success('Connected to backend successfully');
-      } catch (error) {
-        console.error('API health check failed:', error);
-        toast.error('Failed to connect to backend server. Please check if the server is running.');
-      }
-    };
-    
-    checkApiHealth();
-  }, []);
-
   // Fetch documents, templates, and analyses
   useEffect(() => {
     const fetchAll = async () => {
@@ -80,6 +63,7 @@ const PromptTester = () => {
       setPrompt(template ? template.content : '');
     }
   }, [selectedTemplate, templates]);
+
   // Function to save analysis to database
   const handleSaveAnalysis = async () => {
     if (!response || !selectedDoc) {
@@ -137,7 +121,9 @@ const PromptTester = () => {
     };
     
     return eventSource;
-  };  const handleRunAnalysis = async () => {
+  };
+
+  const handleRunAnalysis = async () => {
     console.log('selectedDoc:', selectedDoc, 'prompt:', prompt);
     if (!selectedDoc || !prompt.trim()) {
       toast.error('Select a document and enter a prompt.');
@@ -150,23 +136,15 @@ const PromptTester = () => {
     const eventSource = startProgressStream(selectedDoc);
     
     try {
-      console.log('Sending analysis request to backend...');
       const res = await axios.post('/analyze', {
         file_id: selectedDoc,
         prompt,
       });
-      console.log('Received analysis response:', res.data);
       setResponse(res.data);
       toast.success('Analysis complete!');
-      
-      // Add delay before fetching analyses to ensure backend has completed processing
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
       // Optionally refresh analyses
-      console.log('Fetching updated analyses...');
       const analysesRes = await axios.get('/analyses');
-      console.log('Analyses API response:', analysesRes);
-      console.log('Analyses data after running analysis:', analysesRes.data);
+      console.log('Analyses after running analysis:', analysesRes.data);
       setAnalyses(Array.isArray(analysesRes.data) ? analysesRes.data : []);
     } catch (err) {
       console.error('Error during analysis:', err);
@@ -204,19 +182,13 @@ const PromptTester = () => {
     a.download = fileName;
     a.click();
     URL.revokeObjectURL(url);
-  };  // Compare two analyses side by side
+  };
+
+  // Compare two analyses side by side
   const compareAnalyses = () => {
     if (!compareIds[0] || !compareIds[1]) return null;
-    
-    console.log('Comparing analyses with IDs:', compareIds);
-    console.log('Available analyses:', analyses);
-    
     const a1 = analyses.find(a => a.id === compareIds[0]);
     const a2 = analyses.find(a => a.id === compareIds[1]);
-    
-    console.log('Analysis 1:', a1);
-    console.log('Analysis 2:', a2);
-    
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <div className="bg-white rounded-lg shadow p-4">
@@ -317,7 +289,9 @@ const PromptTester = () => {
                           onChange={e => setPrompt(e.target.value)}
                         />
                       </div>
-                    </div>                    <div className="flex justify-end">
+                    </div>
+                    
+                    <div className="flex justify-end">
                       <button
                         type="button"
                         onClick={handleRunAnalysis}
@@ -364,7 +338,8 @@ const PromptTester = () => {
                           ) : (
                             <pre className="whitespace-pre-wrap break-words text-base">{JSON.stringify(response, null, 2)}</pre>
                           )}
-                        </div>                        <div className="mt-4 flex justify-end space-x-3">
+                        </div>
+                        <div className="mt-4 flex justify-end space-x-3">
                           <button onClick={handleSaveAnalysis} className="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Save Analysis
                           </button>
@@ -387,7 +362,8 @@ const PromptTester = () => {
                       <h3 className="text-lg leading-6 font-medium text-gray-900">Past Analyses</h3>
                     </div>
                     <div className="px-4 py-5 sm:p-6 bg-white">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">                        {analyses.map(a => (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {analyses.map(a => (
                           <div key={a.id} className="border border-gray-200 rounded-md shadow-sm p-3 flex flex-col justify-between bg-gray-50">
                             <div className="font-medium text-gray-900 mb-1 truncate">{a.final_prompt?.slice(0, 40)}...</div>
                             <div className="bg-white rounded p-2 text-xs max-h-24 overflow-auto mb-2 border border-gray-200">
