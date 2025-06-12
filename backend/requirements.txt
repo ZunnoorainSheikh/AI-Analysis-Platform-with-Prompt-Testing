@@ -9,3 +9,4 @@ uuid
 pydantic
 google-generativeai
 sse_starlette
+# psycopg2-binary

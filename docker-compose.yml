@@ -20,7 +20,7 @@ services:
     build: ./backend
     environment:
       - GEMINI_API_KEY=AIzaSyA1cOEN9YHS5XEn8PcZXbKPc3ghGw0qPeg
-      - DATABASE_URL=postgresql://user:password@postgres:5432/docanalyzer
+      - DATABASE_URL=postgresql+asyncpg://user:password@postgres:5432/docanalyzer
       - REDIS_URL=redis://redis:6379
     ports:
       - "8000:8000"
