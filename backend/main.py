@@ -7,7 +7,7 @@ import pdfplumber
 import google.generativeai as genai
 import os
 from crud import create_document, get_all_documents, get_prompt_templates, save_ai_analysis, get_all_analyses
-from database import get_db
+from database import get_db, engine, Base
 from schemas import DocumentOut, PromptTemplateOut, AIAnalysisOut
 from models import Document
 from sse_starlette.sse import EventSourceResponse
@@ -25,8 +25,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def on_startup():
+    # Create all tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
 @app.get("/")
-def root():
+async def root():
     return {"message": "Welcome to the AI Document Analysis Platform API! Visit /docs for the API documentation."}
 
 @app.post("/upload")
