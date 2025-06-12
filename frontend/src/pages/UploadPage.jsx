@@ -56,11 +56,7 @@ const UploadPage = () => {
     <div className="max-w-lg mx-auto mt-16 px-2">
       <ToastContainer />
       <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl p-6 md:p-10">
-        <div className="flex justify-center mb-6">
-          <span className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-2xl shadow">
-            Upload Document
-          </span>
-        </div>
+       
         <div className="bg-gray-50 rounded-xl shadow p-4 md:p-6">
           <div className="space-y-4">
             <input

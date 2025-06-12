@@ -51,6 +51,7 @@ const PromptTester = () => {
   }, [selectedTemplate, templates]);
 
   const handleRunAnalysis = async () => {
+    console.log('selectedDoc:', selectedDoc, 'prompt:', prompt);
     if (!selectedDoc || !prompt.trim()) {
       setSnackbar({ open: true, message: 'Select a document and enter a prompt.', severity: 'error' });
       return;
@@ -59,7 +60,7 @@ const PromptTester = () => {
     setResponse(null);
     try {
       const res = await axios.post('/analyze', {
-        document_id: selectedDoc,
+        file_id: selectedDoc, // Fix: backend expects file_id, not document_id
         prompt,
       });
       setResponse(res.data);
@@ -124,9 +125,7 @@ const PromptTester = () => {
     <div className="max-w-4xl mx-auto mt-10 px-2">
       <ToastContainer />
       <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl p-6 md:p-10">
-        <div className="flex justify-center mb-6">
-          <span className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-2xl shadow">Prompt Tester</span>
-        </div>
+        
         {fetching ? (
           <div className="flex justify-center items-center min-h-[200px]">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
@@ -138,13 +137,18 @@ const PromptTester = () => {
                 <div>
                   <label className="block font-medium mb-1">Document</label>
                   <select
-                    className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400"
+                    className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400 text-black"
                     value={selectedDoc}
-                    onChange={e => setSelectedDoc(e.target.value)}
+                    onChange={e => {
+                      setSelectedDoc(e.target.value);
+                      console.log('Document selected:', e.target.value);
+                    }}
                   >
                     <option value="">Select Document</option>
                     {documents.map(doc => (
-                      <option key={doc.id} value={doc.id}>{doc.name}</option>
+                      <option key={doc.id} value={doc.id || ''}>
+                        {doc.filename ? `${doc.filename} (${doc.id ? doc.id.slice(0, 8) : ''})` : doc.name || doc.id || 'No ID'}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -163,7 +167,7 @@ const PromptTester = () => {
                 </div>
               </div>
               <div className="mb-4">
-                <PromptEditor value={prompt} onChange={e => setPrompt(e.target.value)} />
+                <PromptEditor value={prompt} onChange={setPrompt} />
               </div>
               <div className="flex justify-center">
                 <button
