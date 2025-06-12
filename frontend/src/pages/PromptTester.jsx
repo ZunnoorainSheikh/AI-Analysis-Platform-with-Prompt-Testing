@@ -14,7 +14,6 @@ const PromptTester = () => {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
   const [compareIds, setCompareIds] = useState([null, null]);
 
   // Fetch documents, templates, and analyses
@@ -53,7 +52,7 @@ const PromptTester = () => {
   const handleRunAnalysis = async () => {
     console.log('selectedDoc:', selectedDoc, 'prompt:', prompt);
     if (!selectedDoc || !prompt.trim()) {
-      setSnackbar({ open: true, message: 'Select a document and enter a prompt.', severity: 'error' });
+      toast.error('Select a document and enter a prompt.');
       return;
     }
     setLoading(true);
@@ -184,7 +183,11 @@ const PromptTester = () => {
               <div className="bg-gray-100 rounded-xl shadow p-4 md:p-6">
                 <div className="font-bold text-lg text-indigo-700 mb-2">Gemini Response</div>
                 <div className="bg-white rounded-lg p-3 shadow mb-3 min-h-[120px]">
-                  <pre className="whitespace-pre-wrap break-words text-base">{JSON.stringify(response, null, 2)}</pre>
+                  {typeof response.response === 'string' ? (
+                    <div className="whitespace-pre-line break-words text-base">{response.response}</div>
+                  ) : (
+                    <pre className="whitespace-pre-wrap break-words text-base">{JSON.stringify(response, null, 2)}</pre>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-2 justify-end">
                   <button onClick={handleCopy} className="border border-blue-500 text-blue-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-blue-50 transition">Copy</button>
@@ -220,11 +223,6 @@ const PromptTester = () => {
           </div>
         )}
       </div>
-      {snackbar.open && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-2 rounded-lg shadow-lg z-50 animate-fade-in">
-          {snackbar.message}
-        </div>
-      )}
     </div>
   );
 };
