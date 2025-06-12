@@ -64,10 +64,8 @@ const UploadPage = () => {
               Upload PDF or TXT files for AI analysis (max 5MB)
             </p>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <div className="max-w-2xl mx-auto bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+        </div>        <div className="mt-8">
+          <div className="w-full mx-auto bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
             <div className="px-4 py-5 sm:p-6">
               <div className="space-y-6">
                 <div>
