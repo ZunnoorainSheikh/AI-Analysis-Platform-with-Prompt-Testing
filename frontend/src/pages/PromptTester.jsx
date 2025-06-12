@@ -121,108 +121,185 @@ const PromptTester = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 px-2">
-      <ToastContainer />
-      <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl p-6 md:p-10">
-        
-        {fetching ? (
-          <div className="flex justify-center items-center min-h-[200px]">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+    <div className="bg-white">
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="md:flex md:items-center md:justify-between">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">AI Analyzer</h2>
+            <p className="mt-1 text-sm text-gray-500">Analyze documents with custom prompts and compare results</p>
           </div>
-        ) : (
-          <div className="space-y-8">
-            <div className="bg-gray-50 rounded-xl shadow p-4 md:p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block font-medium mb-1">Document</label>
-                  <select
-                    className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400 text-black"
-                    value={selectedDoc}
-                    onChange={e => {
-                      setSelectedDoc(e.target.value);
-                      console.log('Document selected:', e.target.value);
-                    }}
-                  >
-                    <option value="">Select Document</option>
-                    {documents.map(doc => (
-                      <option key={doc.id} value={doc.id || ''}>
-                        {doc.filename ? `${doc.filename} (${doc.id ? doc.id.slice(0, 8) : ''})` : doc.name || doc.id || 'No ID'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-medium mb-1">Prompt Template</label>
-                  <select
-                    className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-400"
-                    value={selectedTemplate}
-                    onChange={e => setSelectedTemplate(e.target.value)}
-                  >
-                    <option value="">Custom</option>
-                    {templates.map(t => (
-                      <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="mb-4">
-                <PromptEditor value={prompt} onChange={setPrompt} />
-              </div>
-              <div className="flex justify-center">
-                <button
-                  className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-lg px-8 py-2 shadow hover:scale-105 transition-transform disabled:opacity-60"
-                  onClick={handleRunAnalysis}
-                  disabled={loading}
-                >
-                  {loading ? <span className="animate-spin inline-block w-6 h-6 border-b-2 border-white rounded-full"></span> : 'Run Analysis'}
-                </button>
-              </div>
-            </div>
+        </div>
 
-            {response && (
-              <div className="bg-gray-100 rounded-xl shadow p-4 md:p-6">
-                <div className="font-bold text-lg text-indigo-700 mb-2">Gemini Response</div>
-                <div className="bg-white rounded-lg p-3 shadow mb-3 min-h-[120px]">
-                  {typeof response.response === 'string' ? (
-                    <div className="whitespace-pre-line break-words text-base">{response.response}</div>
-                  ) : (
-                    <pre className="whitespace-pre-wrap break-words text-base">{JSON.stringify(response, null, 2)}</pre>
-                  )}
+        <div className="mt-8">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+            <div className="px-4 py-5 sm:p-6">
+              {fetching ? (
+                <div className="flex justify-center items-center py-12">
+                  <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
                 </div>
-                <div className="flex flex-wrap gap-2 justify-end">
-                  <button onClick={handleCopy} className="border border-blue-500 text-blue-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-blue-50 transition">Copy</button>
-                  <button onClick={() => handleExport('json')} className="border border-indigo-500 text-indigo-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-indigo-50 transition">Export JSON</button>
-                  <button onClick={() => handleExport('md')} className="border border-green-500 text-green-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-green-50 transition">Export Markdown</button>
-                </div>
-              </div>
-            )}
+              ) : (
+                <div className="space-y-8">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg leading-6 font-medium text-gray-900">Analysis Configuration</h3>
+                      <div className="mt-2 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div className="sm:col-span-3">
+                          <label htmlFor="document" className="block text-sm font-medium text-gray-700">
+                            Document
+                          </label>
+                          <div className="mt-1">
+                            <select
+                              id="document"
+                              name="document"
+                              className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              value={selectedDoc}
+                              onChange={e => {
+                                setSelectedDoc(e.target.value);
+                              }}
+                            >
+                              <option value="">Select Document</option>
+                              {documents.map(doc => (
+                                <option key={doc.id} value={doc.id || ''}>
+                                  {doc.filename ? `${doc.filename} (${doc.id ? doc.id.slice(0, 8) : ''})` : doc.name || doc.id || 'No ID'}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
 
-            <div className="bg-gray-50 rounded-xl shadow p-4 md:p-6">
-              <div className="font-bold text-lg text-blue-700 mb-2">Past Analyses</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {analyses.map(a => (
-                  <div key={a.id} className="bg-white rounded-lg shadow p-3 flex flex-col justify-between">
-                    <div className="font-semibold text-gray-700 mb-1 truncate">{a.prompt?.slice(0, 40)}...</div>
-                    <div className="bg-gray-100 rounded p-2 text-xs max-h-24 overflow-auto mb-2">
-                      <pre className="whitespace-pre-wrap break-words">{JSON.stringify(a.response, null, 2)}</pre>
+                        <div className="sm:col-span-3">
+                          <label htmlFor="template" className="block text-sm font-medium text-gray-700">
+                            Prompt Template
+                          </label>
+                          <div className="mt-1">
+                            <select
+                              id="template"
+                              name="template"
+                              className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              value={selectedTemplate}
+                              onChange={e => setSelectedTemplate(e.target.value)}
+                            >
+                              <option value="">Custom</option>
+                              {templates.map(t => (
+                                <option key={t.id} value={t.id}>{t.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex gap-2 justify-end">
-                      <button onClick={() => setCompareIds([a.id, compareIds[1]])} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-xs">Compare as 1</button>
-                      <button onClick={() => setCompareIds([compareIds[0], a.id])} className="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition text-xs">Compare as 2</button>
+
+                    <div>
+                      <label htmlFor="prompt" className="block text-sm font-medium text-gray-700">
+                        Prompt
+                      </label>
+                      <div className="mt-1">
+                        <textarea
+                          id="prompt"
+                          name="prompt"
+                          rows={5}
+                          className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                          value={prompt}
+                          onChange={e => setPrompt(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={handleRunAnalysis}
+                        disabled={loading}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                      >
+                        {loading ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing
+                          </>
+                        ) : "Run Analysis"}
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-              {compareIds[0] && compareIds[1] && (
-                <div className="mt-6">
-                  <div className="font-semibold text-blue-700 mb-2">Compare Analyses</div>
-                  {compareAnalyses()}
+
+                  {response && (
+                    <div className="rounded-md bg-white border border-gray-200 shadow-sm overflow-hidden">
+                      <div className="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">Gemini Response</h3>
+                      </div>
+                      <div className="px-4 py-5 sm:p-6 bg-white">
+                        <div className="bg-gray-50 p-4 rounded-md overflow-auto max-h-72">
+                          {typeof response.response === 'string' ? (
+                            <div className="whitespace-pre-line break-words text-base">{response.response}</div>
+                          ) : (
+                            <pre className="whitespace-pre-wrap break-words text-base">{JSON.stringify(response, null, 2)}</pre>
+                          )}
+                        </div>
+                        <div className="mt-4 flex justify-end space-x-3">
+                          <button onClick={handleCopy} className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Copy
+                          </button>
+                          <button onClick={() => handleExport('json')} className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Export JSON
+                          </button>
+                          <button onClick={() => handleExport('md')} className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Export Markdown
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="rounded-md bg-white border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900">Past Analyses</h3>
+                    </div>
+                    <div className="px-4 py-5 sm:p-6 bg-white">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {analyses.map(a => (
+                          <div key={a.id} className="border border-gray-200 rounded-md shadow-sm p-3 flex flex-col justify-between bg-gray-50">
+                            <div className="font-medium text-gray-900 mb-1 truncate">{a.prompt?.slice(0, 40)}...</div>
+                            <div className="bg-white rounded p-2 text-xs max-h-24 overflow-auto mb-2 border border-gray-200">
+                              <pre className="whitespace-pre-wrap break-words">{JSON.stringify(a.response, null, 2)}</pre>
+                            </div>
+                            <div className="flex gap-2 justify-end">
+                              <button 
+                                onClick={() => setCompareIds([a.id, compareIds[1]])} 
+                                className="inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              >
+                                Compare as 1
+                              </button>
+                              <button 
+                                onClick={() => setCompareIds([compareIds[0], a.id])} 
+                                className="inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              >
+                                Compare as 2
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {compareIds[0] && compareIds[1] && (
+                        <div className="mt-6">
+                          <h4 className="text-base font-medium text-gray-900 mb-2">Compare Analyses</h4>
+                          {compareAnalyses()}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </div>
-        )}
+        </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
