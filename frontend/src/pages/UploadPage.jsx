@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, Button, Input, Alert, CircularProgress, Paper, Stack, Card } from '@mui/material';
 import axios from '../axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -54,44 +53,48 @@ const UploadPage = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 6 }}>
+    <div className="max-w-lg mx-auto mt-16 px-2">
       <ToastContainer />
-      <Paper elevation={4} sx={{ p: { xs: 2, md: 4 }, borderRadius: 4, background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%)' }}>
-        <Stack spacing={3}>
-          <Typography variant="h3" align="center" fontWeight={700} color="primary.main" gutterBottom letterSpacing={1}>
+      <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl p-6 md:p-10">
+        <div className="flex justify-center mb-6">
+          <span className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-2xl shadow">
             Upload Document
-          </Typography>
-          <Card elevation={2} sx={{ p: 3, borderRadius: 3, background: '#fff' }}>
-            <Stack spacing={2}>
-              <Input
-                type="file"
-                inputProps={{ accept: '.pdf,.txt' }}
-                onChange={handleFileChange}
-                disabled={loading}
-                sx={{ borderRadius: 2, background: '#f8fafc', p: 1 }}
-              />
-              {file && (
-                <Alert severity="info" sx={{ borderRadius: 2 }}>
-                  {file.name} ({(file.size / 1024).toFixed(2)} KB)
-                </Alert>
+          </span>
+        </div>
+        <div className="bg-gray-50 rounded-xl shadow p-4 md:p-6">
+          <div className="space-y-4">
+            <input
+              type="file"
+              accept=".pdf,.txt"
+              onChange={handleFileChange}
+              disabled={loading}
+              className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {file && (
+              <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm">
+                {file.name} ({(file.size / 1024).toFixed(2)} KB)
+              </div>
+            )}
+            {error && (
+              <div className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+            <button
+              onClick={handleUpload}
+              disabled={loading || !file}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-lg px-8 py-2 shadow hover:scale-105 transition-transform disabled:opacity-60 text-lg"
+            >
+              {loading ? (
+                <span className="animate-spin inline-block w-6 h-6 border-b-2 border-white rounded-full"></span>
+              ) : (
+                'Upload'
               )}
-              {error && <Alert severity="error" sx={{ borderRadius: 2 }}>{error}</Alert>}
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleUpload}
-                disabled={loading || !file}
-                fullWidth
-                size="large"
-                sx={{ borderRadius: 2, fontWeight: 600, fontSize: 18, py: 1.5, boxShadow: 2, transition: '0.2s', ':hover': { boxShadow: 6 } }}
-              >
-                {loading ? <CircularProgress size={28} color="inherit" /> : 'Upload'}
-              </Button>
-            </Stack>
-          </Card>
-        </Stack>
-      </Paper>
-    </Container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

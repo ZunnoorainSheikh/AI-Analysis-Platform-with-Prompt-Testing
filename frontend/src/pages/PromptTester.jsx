@@ -1,28 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  TextField,
-  Card,
-  CardContent,
-  CardActions,
-  Grid,
-  CircularProgress,
-  Snackbar,
-  IconButton,
-  Paper,
-  Stack,
-  Chip,
-  Avatar,
-} from '@mui/material';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import DownloadIcon from '@mui/icons-material/Download';
 import axios from '../axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -131,176 +107,121 @@ const PromptTester = () => {
     const a1 = analyses.find(a => a.id === compareIds[0]);
     const a2 = analyses.find(a => a.id === compareIds[1]);
     return (
-      <Grid container spacing={2} sx={{ mt: 2 }}>
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="subtitle1">Analysis 1</Typography>
-              <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{JSON.stringify(a1?.response, null, 2)}</pre>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="subtitle1">Analysis 2</Typography>
-              <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{JSON.stringify(a2?.response, null, 2)}</pre>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="font-semibold mb-2">Analysis 1</div>
+          <pre className="whitespace-pre-wrap break-words text-sm">{JSON.stringify(a1?.response, null, 2)}</pre>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="font-semibold mb-2">Analysis 2</div>
+          <pre className="whitespace-pre-wrap break-words text-sm">{JSON.stringify(a2?.response, null, 2)}</pre>
+        </div>
+      </div>
     );
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 6 }}>
+    <div className="max-w-4xl mx-auto mt-10 px-2">
       <ToastContainer />
-      <div className="glass-card prompt-tester-main">
-        <Stack spacing={3}>
-          <Typography variant="h3" align="center" fontWeight={700} color="primary.main" gutterBottom letterSpacing={1} className="prompt-tester-title">
-            <Chip label="Prompt Tester" color="primary" avatar={<Avatar>P</Avatar>} sx={{ fontWeight: 700, fontSize: 20, mb: 1 }} />
-          </Typography>
-          {fetching ? (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-              <CircularProgress size={40} color="primary" />
-            </Box>
-          ) : (
-            <Stack spacing={4}>
-              <div className="glass-section">
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
-                      <InputLabel id="doc-label">Document</InputLabel>
-                      <Select
-                        labelId="doc-label"
-                        value={selectedDoc}
-                        label="Document"
-                        onChange={e => setSelectedDoc(e.target.value)}
-                        sx={{ borderRadius: 2, fontWeight: 500 }}
-                      >
-                        {documents.map(doc => (
-                          <MenuItem key={doc.id} value={doc.id}>
-                            <Avatar sx={{ width: 24, height: 24, mr: 1, bgcolor: 'primary.light' }}>{doc.name?.[0]?.toUpperCase()}</Avatar>
-                            {doc.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
-                      <InputLabel id="template-label">Prompt Template</InputLabel>
-                      <Select
-                        labelId="template-label"
-                        value={selectedTemplate}
-                        label="Prompt Template"
-                        onChange={e => setSelectedTemplate(e.target.value)}
-                        sx={{ borderRadius: 2, fontWeight: 500 }}
-                      >
-                        <MenuItem value="">Custom</MenuItem>
-                        {templates.map(t => (
-                          <MenuItem key={t.id} value={t.id}>
-                            <Chip label={t.name} color="secondary" size="small" sx={{ mr: 1 }} />
-                            {t.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <PromptEditor value={prompt} onChange={e => setPrompt(e.target.value)} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleRunAnalysis}
-                      disabled={loading}
-                      fullWidth
-                      size="large"
-                      className="btn-animate"
-                    >
-                      {loading ? <CircularProgress size={28} color="inherit" /> : 'Run Analysis'}
-                    </Button>
-                  </Grid>
-                </Grid>
+      <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl p-6 md:p-10">
+        <div className="flex justify-center mb-6">
+          <span className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-2xl shadow">Prompt Tester</span>
+        </div>
+        {fetching ? (
+          <div className="flex justify-center items-center min-h-[200px]">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="bg-gray-50 rounded-xl shadow p-4 md:p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block font-medium mb-1">Document</label>
+                  <select
+                    className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-400"
+                    value={selectedDoc}
+                    onChange={e => setSelectedDoc(e.target.value)}
+                  >
+                    <option value="">Select Document</option>
+                    {documents.map(doc => (
+                      <option key={doc.id} value={doc.id}>{doc.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-medium mb-1">Prompt Template</label>
+                  <select
+                    className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-indigo-400"
+                    value={selectedTemplate}
+                    onChange={e => setSelectedTemplate(e.target.value)}
+                  >
+                    <option value="">Custom</option>
+                    {templates.map(t => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
+              <div className="mb-4">
+                <PromptEditor value={prompt} onChange={e => setPrompt(e.target.value)} />
+              </div>
+              <div className="flex justify-center">
+                <button
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-lg px-8 py-2 shadow hover:scale-105 transition-transform disabled:opacity-60"
+                  onClick={handleRunAnalysis}
+                  disabled={loading}
+                >
+                  {loading ? <span className="animate-spin inline-block w-6 h-6 border-b-2 border-white rounded-full"></span> : 'Run Analysis'}
+                </button>
+              </div>
+            </div>
 
-              {response && (
-                <div className="glass-section glass-response">
-                  <CardContent>
-                    <Typography variant="h5" fontWeight={600} color="primary.dark" gutterBottom>
-                      Gemini Response
-                    </Typography>
-                    <Box sx={{ background: '#fff', borderRadius: 2, p: 2, boxShadow: 1 }}>
-                      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, fontSize: 16 }}>{JSON.stringify(response, null, 2)}</pre>
-                    </Box>
-                  </CardContent>
-                  <CardActions sx={{ justifyContent: 'flex-end', gap: 2 }}>
-                    <Button startIcon={<ContentCopyIcon />} onClick={handleCopy} color="primary" variant="outlined" className="btn-animate">
-                      Copy
-                    </Button>
-                    <Button startIcon={<DownloadIcon />} onClick={() => handleExport('json')} color="secondary" variant="outlined" className="btn-animate">
-                      Export JSON
-                    </Button>
-                    <Button startIcon={<DownloadIcon />} onClick={() => handleExport('md')} color="success" variant="outlined" className="btn-animate">
-                      Export Markdown
-                    </Button>
-                  </CardActions>
+            {response && (
+              <div className="bg-gray-100 rounded-xl shadow p-4 md:p-6">
+                <div className="font-bold text-lg text-indigo-700 mb-2">Gemini Response</div>
+                <div className="bg-white rounded-lg p-3 shadow mb-3 min-h-[120px]">
+                  <pre className="whitespace-pre-wrap break-words text-base">{JSON.stringify(response, null, 2)}</pre>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-end">
+                  <button onClick={handleCopy} className="border border-blue-500 text-blue-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-blue-50 transition">Copy</button>
+                  <button onClick={() => handleExport('json')} className="border border-indigo-500 text-indigo-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-indigo-50 transition">Export JSON</button>
+                  <button onClick={() => handleExport('md')} className="border border-green-500 text-green-600 px-4 py-1.5 rounded-lg font-semibold hover:bg-green-50 transition">Export Markdown</button>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-gray-50 rounded-xl shadow p-4 md:p-6">
+              <div className="font-bold text-lg text-blue-700 mb-2">Past Analyses</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {analyses.map(a => (
+                  <div key={a.id} className="bg-white rounded-lg shadow p-3 flex flex-col justify-between">
+                    <div className="font-semibold text-gray-700 mb-1 truncate">{a.prompt?.slice(0, 40)}...</div>
+                    <div className="bg-gray-100 rounded p-2 text-xs max-h-24 overflow-auto mb-2">
+                      <pre className="whitespace-pre-wrap break-words">{JSON.stringify(a.response, null, 2)}</pre>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <button onClick={() => setCompareIds([a.id, compareIds[1]])} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition text-xs">Compare as 1</button>
+                      <button onClick={() => setCompareIds([compareIds[0], a.id])} className="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition text-xs">Compare as 2</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {compareIds[0] && compareIds[1] && (
+                <div className="mt-6">
+                  <div className="font-semibold text-blue-700 mb-2">Compare Analyses</div>
+                  {compareAnalyses()}
                 </div>
               )}
-
-              <div className="glass-section">
-                <Box sx={{ p: 2 }}>
-                  <Typography variant="h5" fontWeight={600} color="primary.main" gutterBottom>
-                    Past Analyses
-                  </Typography>
-                  <Grid container spacing={2}>
-                    {analyses.map(a => (
-                      <Grid item xs={12} md={6} key={a.id}>
-                        <div className="glass-mini-card">
-                          <CardContent>
-                            <Typography variant="subtitle2" fontWeight={500} color="text.secondary">
-                              {a.prompt?.slice(0, 40)}...
-                            </Typography>
-                            <Box sx={{ background: '#f4f6fa', borderRadius: 1, p: 1, mt: 1, maxHeight: 100, overflow: 'auto' }}>
-                              <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}>{JSON.stringify(a.response, null, 2)}</pre>
-                            </Box>
-                          </CardContent>
-                          <CardActions sx={{ justifyContent: 'flex-end', gap: 1 }}>
-                            <Button size="small" onClick={() => setCompareIds([a.id, compareIds[1]])} variant="text" color="primary" className="btn-animate">
-                              Compare as 1
-                            </Button>
-                            <Button size="small" onClick={() => setCompareIds([compareIds[0], a.id])} variant="text" color="secondary" className="btn-animate">
-                              Compare as 2
-                            </Button>
-                          </CardActions>
-                        </div>
-                      </Grid>
-                    ))}
-                  </Grid>
-                  {compareIds[0] && compareIds[1] && (
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="h6" fontWeight={600} color="primary.main" gutterBottom>
-                        Compare Analyses
-                      </Typography>
-                      {compareAnalyses()}
-                    </Box>
-                  )}
-                </Box>
-              </div>
-            </Stack>
-          )}
-        </Stack>
+            </div>
+          </div>
+        )}
       </div>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      />
-    </Container>
+      {snackbar.open && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-2 rounded-lg shadow-lg z-50 animate-fade-in">
+          {snackbar.message}
+        </div>
+      )}
+    </div>
   );
 };
 
